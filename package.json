@@ -1,10 +1,16 @@
 {
+    "$schema": "./node_modules/ng-packagr/package.schema.json",
     "name": "@ht14x/light-mapper",
-    "version": "1.1.13",
+    "version": "1.1.14",
     "description": "Lightweight typescript object mapper",
+    "ngPackage": {
+        "lib": {
+            "entryFile": "src/index.ts"
+        }
+    },
     "main": "./lib/index.js",
     "scripts": {
-        "build": "rimraf lib && tsc"
+        "build": "rimraf dist && ng-packagr -p package.json"
     },
     "files": [
         "lib",
@@ -28,10 +34,14 @@
     },
     "homepage": "https://github.com/HT14X/light-mapper#readme",
     "devDependencies": {
+        "@angular/compiler": "^12.2.0",
+        "@angular/compiler-cli": "^12.2.0",
+        "@angular/core": "^12.2.0",
+        "ng-packagr": "^12.2.0",
         "rimraf": "^3.0.2",
         "typescript": "^4.3.5"
     },
-    "dependencies": {
+    "peerDependencies": {
         "reflect-metadata": "^0.1.13"
     }
 }
