@@ -25,4 +25,8 @@ export class LightMapper {
     ): T {
         return new LightMapperRunner().map<T>(target, source, exclude);
     }
+
+    public getDescription<T = any>(target: new () => T): { name: string, field: string }[] {
+        return new LightMapperRunner().getDescription<T>(target);
+    }
 }

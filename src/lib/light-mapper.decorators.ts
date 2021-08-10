@@ -10,10 +10,12 @@ export enum MappingMetadata {
     MAPPER_PROPS_METADATA
 }
 
-export interface MappingOpts {
-    requirement: MappingRequirement
-    from?: string | string[]
-    transformation?: (value: any) => any
+export interface MappingOpts<T = any> {
+    requirement: MappingRequirement,
+    from?: string | string[],
+    name?: string,
+    config?: T,
+    transformation?: (value: any) => any,
 }
 
 export function Mapping(

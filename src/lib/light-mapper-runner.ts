@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { IAssocFunction, IAssocAny, MapperCallBack } from './light-mapper.types';
 import { MappingMetadata, MappingRequirement } from './light-mapper.decorators';
+import { Description } from "./interface/description.intreface";
 
 enum MAPPER_EXCEPTIONS {
     MISSING_REQUIRED_MEMBER = "Missing required property '{prop}'",
@@ -10,7 +11,9 @@ enum MAPPER_EXCEPTIONS {
 enum MappingOptsProps {
     REQUIREMENT = 'requirement',
     FROM = 'from',
-    TRANSFORMATION = 'transformation'
+    TRANSFORMATION = 'transformation',
+    NAME = 'name',
+    CONFIG = 'config',
 }
 
 const PROP_PLACEHOLDER = '{prop}';
@@ -18,39 +21,6 @@ const PROP_PLACEHOLDER = '{prop}';
 export class LightMapperRunner {
     private transfromations: IAssocFunction = {};
     private replacements: IAssocAny = {};
-
-    public transform(
-        prop: string,
-        transformator: MapperCallBack
-    ): LightMapperRunner {
-        this.transfromations[prop] = transformator;
-        return this;
-    }
-
-    public replace(prop: string, value: any) {
-        this.replacements[prop] = value;
-        return this;
-    }
-
-    public map<T>(
-        target: new () => T,
-        source: IAssocAny,
-        exclude?: string[]
-    ): T {
-        const obj: T = new target();
-        const metadata = Reflect.getMetadata(
-            MappingMetadata.MAPPER_PROPS_METADATA,
-            obj.constructor
-        );
-        Object.keys(metadata).forEach(prop => {
-            const propOptions = metadata[prop];
-            if (exclude && this.isExcluded(exclude, prop, propOptions)) {
-                return;
-            }
-            this.setProperty(prop, propOptions, source, obj);
-        });
-        return obj;
-    }
 
     private isExcluded(
         exclude: string[],
@@ -89,7 +59,7 @@ export class LightMapperRunner {
     ): string {
         if (from instanceof Array) {
             for (const prop of from) {
-                if (source.hasOwnProperty(prop) || source[prop]) {
+                if (source.hasOwnProperty(prop) || source[prop] !== undefined) {
                     return prop;
                 }
             }
@@ -161,7 +131,7 @@ export class LightMapperRunner {
         const sourceProp = from
             ? this.getSourceProp(source, targetProp, from)
             : targetProp;
-        if (source.hasOwnProperty(sourceProp) || source[sourceProp]) {
+        if (source.hasOwnProperty(sourceProp) || source[sourceProp] !== undefined) {
             obj[targetProp] = this.doTransformation(
                 targetProp,
                 source[sourceProp],
@@ -187,7 +157,7 @@ export class LightMapperRunner {
         const sourceProp = from
             ? this.getSourceProp(source, targetProp, from)
             : targetProp;
-        if (source.hasOwnProperty(sourceProp) || source[sourceProp]) {
+        if (source.hasOwnProperty(sourceProp) || source[sourceProp] !== undefined) {
             obj[targetProp] = this.doTransformation(
                 targetProp,
                 source[sourceProp],
@@ -207,7 +177,7 @@ export class LightMapperRunner {
         const sourceProp = from
             ? this.getSourceProp(source, targetProp, from)
             : targetProp;
-        if (source.hasOwnProperty(sourceProp) || source[sourceProp]) {
+        if (source.hasOwnProperty(sourceProp) || source[sourceProp] !== undefined) {
             obj[targetProp] = this.doTransformation(
                 targetProp,
                 source[sourceProp],
@@ -217,5 +187,56 @@ export class LightMapperRunner {
         } else {
             obj[targetProp] = null;
         }
+    }
+
+    public transform(
+        prop: string,
+        transformator: MapperCallBack
+    ): LightMapperRunner {
+        this.transfromations[prop] = transformator;
+        return this;
+    }
+
+    public replace(prop: string, value: any) {
+        this.replacements[prop] = value;
+        return this;
+    }
+
+    public map<T extends Object>(
+        target: new () => T,
+        source: IAssocAny,
+        exclude?: string[]
+    ): T {
+        const obj: T = new target();
+        const metadata = Reflect.getMetadata(
+            MappingMetadata.MAPPER_PROPS_METADATA,
+            obj.constructor
+        );
+        Object.keys(metadata).forEach(prop => {
+            const propOptions = metadata[prop];
+            if (exclude && this.isExcluded(exclude, prop, propOptions)) {
+                return;
+            }
+            this.setProperty(prop, propOptions, source, obj);
+        });
+        return obj;
+    }
+
+    public getDescription<T extends Object = any>(target: new () => T): Description[] {
+        const obj: T = new target();
+        const metadata = Reflect.getMetadata(
+            MappingMetadata.MAPPER_PROPS_METADATA,
+            obj.constructor
+        );
+        return Object.keys(metadata).map(prop => {
+            const propOptions = metadata[prop];
+            const hasName = propOptions.hasOwnProperty(MappingOptsProps.NAME);
+            const hasConfig = propOptions.hasOwnProperty(MappingOptsProps.CONFIG);
+            return {
+                name: hasName ? propOptions[MappingOptsProps.NAME] : prop,
+                field: prop,
+                config: hasConfig ? propOptions[MappingOptsProps.CONFIG] : undefined,
+            };
+        });
     }
 }
