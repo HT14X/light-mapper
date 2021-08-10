@@ -44,3 +44,4 @@ yarn.lock
 others
 .DS_Store
 .npmrc
+playground.ts

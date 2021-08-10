@@ -1,7 +1,7 @@
 {
     "$schema": "./node_modules/ng-packagr/package.schema.json",
     "name": "@ht14x/light-mapper",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "description": "Lightweight typescript object mapper",
     "ngPackage": {
         "lib": {
@@ -10,7 +10,8 @@
     },
     "main": "./lib/index.js",
     "scripts": {
-        "build": "rimraf dist && ng-packagr -p package.json"
+        "build": "rimraf dist && ng-packagr -p package.json",
+        "playground": "rimraf dist && tsc-watch -p tsconfig.playground.json --onSuccess \"node ./dist/playground.js\""
     },
     "files": [
         "lib",
@@ -39,6 +40,7 @@
         "@angular/core": "^12.2.0",
         "ng-packagr": "^12.2.0",
         "rimraf": "^3.0.2",
+        "tsc-watch": "^4.4.0",
         "typescript": "^4.3.5"
     },
     "peerDependencies": {
