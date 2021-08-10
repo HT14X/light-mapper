@@ -1,10 +1,10 @@
 ## LightMapper
 
-typescript mapper from object to object
+Advanced object mapping tool, especially useful for third-party object mapping and transformation.
 
 ### Install
 
-npm install light-mapper
+`npm install light-mapper`
 
 ### Use
 
