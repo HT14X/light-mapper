@@ -1,7 +1,7 @@
 {
     "$schema": "./node_modules/ng-packagr/package.schema.json",
     "name": "@ht14x/light-mapper",
-    "version": "1.1.14",
+    "version": "1.1.15",
     "description": "Lightweight typescript object mapper",
     "ngPackage": {
         "lib": {
